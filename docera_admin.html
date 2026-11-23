@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<title>Docera — Admin Console</title>
+<style>
+:root{--bg:#090909;--panel:#111;--panel2:#171717;--line:#292929;--muted:#929292;--text:#f5f5f5;--white:#fff;--soft:#c9c9c9;--radius:16px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:#0d0d0d;border-right:1px solid var(--line);padding:23px 15px;display:flex;flex-direction:column;z-index:5}
+.brand{display:flex;align-items:center;gap:11px;padding:0 10px 28px}.brand-mark{width:35px;height:35px;border-radius:11px;background:#f5f5f5;color:#080808;display:grid;place-items:center;font-weight:900;font-size:19px}.brand-name{font-size:18px;font-weight:750;letter-spacing:-.6px}.brand-sub{font-size:10px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase}
+.nav-label{font-size:10px;color:#686868;text-transform:uppercase;letter-spacing:1.5px;padding:12px 12px 8px;font-weight:700}
+.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;color:#a5a5a5;text-align:left;padding:11px 12px;border-radius:10px;display:flex;align-items:center;gap:12px;transition:.2s;font-weight:550}.nav button:hover{background:#1b1b1b;color:white}.nav button.active{background:#f1f1f1;color:#090909;font-weight:700}.ico{width:18px;text-align:center;font-size:15px}.nav .count{margin-left:auto;font-size:10px;background:#292929;color:#ddd;padding:2px 7px;border-radius:20px}.nav button.active .count{background:#d5d5d5;color:#111}
+.sidebar-bottom{margin-top:auto}.admin-mini{border:1px solid var(--line);background:#141414;border-radius:13px;padding:12px;display:flex;gap:10px;align-items:center}.avatar{width:34px;height:34px;border-radius:50%;background:#eee;color:#111;display:grid;place-items:center;font-weight:800}.admin-mini strong{display:block;font-size:12px}.admin-mini small{color:var(--muted);font-size:11px}
+main{grid-column:2;min-width:0;padding:0 34px 40px;margin-left:250px}
+.topbar{height:78px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);margin-bottom:30px;gap:16px}.crumb{color:var(--muted);font-size:12px}.crumb b{color:#eee;font-weight:600}.top-actions{display:flex;align-items:center;gap:10px}.icon-btn,.btn{border:1px solid var(--line);background:#141414;color:#eee;border-radius:10px;padding:9px 12px}.icon-btn{width:38px;height:38px;padding:0}.btn:hover,.icon-btn:hover{background:#222}.btn.primary{background:#f2f2f2;color:#090909;border-color:#f2f2f2;font-weight:700}.btn.primary:hover{background:#d8d8d8}.btn.small{padding:7px 10px;font-size:12px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:24px}.eyebrow{color:#888;font-size:10px;text-transform:uppercase;letter-spacing:1.7px;font-weight:700}.page-head h1{font-size:28px;letter-spacing:-1.1px;margin:4px 0 3px}.page-head p{margin:0;color:var(--muted);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}.stat{padding:17px 18px;min-height:126px}.stat-top{display:flex;justify-content:space-between;align-items:center;color:#aaa;font-size:12px}.stat-icon{width:31px;height:31px;border:1px solid #333;border-radius:9px;display:grid;place-items:center;color:#eee}.stat-value{font-size:27px;font-weight:750;letter-spacing:-1px;margin:12px 0 2px}.stat-foot{font-size:11px;color:#888}.up{color:#ddd;font-weight:700}
+.grid-main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,1fr);gap:16px;margin-bottom:16px}.panel{padding:19px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}.panel-head h2{font-size:14px;margin:0;font-weight:700}.panel-head p{margin:3px 0 0;color:var(--muted);font-size:11px}.select{background:#171717;color:#ddd;border:1px solid #333;border-radius:8px;padding:7px 9px;font-size:11px}
+.chart-wrap{height:210px;position:relative;padding:10px 4px 24px 30px}.chart-grid{position:absolute;inset:12px 0 27px 30px;display:flex;flex-direction:column;justify-content:space-between}.chart-grid span{border-top:1px dashed #303030;width:100%}.chart-labels{position:absolute;bottom:0;left:30px;right:0;display:flex;justify-content:space-between;color:#777;font-size:10px}.bars{position:absolute;inset:12px 5px 28px 38px;display:flex;align-items:flex-end;justify-content:space-around;gap:10px}.bar-group{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px}.bar{width: min(17px,45%);border-radius:5px 5px 1px 1px;background:#eee;min-height:4px}.bar.dim{background:#555}.legend{display:flex;gap:15px;color:#999;font-size:10px;margin-top:10px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#eee;margin-right:5px}.dot.dim{background:#555}
+.plan-list{display:grid;gap:15px}.plan-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#bbb}.plan-row strong{color:#eee;font-size:12px}.track{height:7px;background:#292929;border-radius:20px;margin-top:7px;overflow:hidden}.fill{height:100%;background:#eee;border-radius:20px}.activity{display:grid;gap:0}.activity-item{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid #252525}.activity-item:last-child{border:0}.activity-mark{width:28px;height:28px;flex:none;border-radius:9px;background:#222;display:grid;place-items:center;color:#ddd}.activity-text{flex:1;min-width:0}.activity-text b{font-size:11px;font-weight:650}.activity-text p{font-size:10px;color:#888;margin:2px 0 0}.activity time{font-size:10px;color:#777;white-space:nowrap}
+.table-panel{padding:0;overflow:hidden}.table-title{padding:18px 19px 13px;display:flex;justify-content:space-between;align-items:center;gap:12px}.table-title h2{margin:0;font-size:14px}.table-tools{display:flex;gap:8px;align-items:center}.search{width:190px;background:#171717;border:1px solid #333;color:#eee;border-radius:9px;padding:8px 10px;outline:none;font-size:11px}.search:focus,input:focus,select:focus{border-color:#888}
+table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}th{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#777;font-weight:650;background:#141414;padding:12px 18px;border-top:1px solid #252525;border-bottom:1px solid #252525}td{padding:13px 18px;border-bottom:1px solid #222;font-size:11px;color:#c7c7c7}tr:last-child td{border-bottom:0}.user-cell{display:flex;align-items:center;gap:9px}.user-avatar{width:28px;height:28px;border-radius:50%;background:#ddd;color:#111;display:grid;place-items:center;font-size:10px;font-weight:800}.user-cell b{display:block;color:#eee;font-size:11px}.user-cell small{display:block;color:#777;font-size:10px}.status{display:inline-flex;align-items:center;gap:5px;border:1px solid #3a3a3a;border-radius:20px;padding:4px 8px;color:#ddd;font-size:10px}.status:before{content:"";width:5px;height:5px;background:#ddd;border-radius:50%}.status.pending:before{background:#777}.status.blocked:before{background:#444}.action{background:transparent;border:1px solid #333;color:#ccc;border-radius:7px;padding:5px 8px;font-size:10px}.action:hover{background:#252525}
+.section{display:none}.section.active{display:block}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.setting{padding:17px;border:1px solid #292929;border-radius:13px;background:#131313;display:flex;align-items:center;justify-content:space-between;gap:15px}.setting b{font-size:12px}.setting p{font-size:10px;color:#888;margin:4px 0 0}.switch{width:39px;height:22px;border-radius:20px;border:1px solid #555;background:#333;padding:2px;flex:none;transition:.2s}.switch:after{content:"";display:block;width:16px;height:16px;border-radius:50%;background:#aaa;transition:.2s}.switch.on{background:#eee;border-color:#eee}.switch.on:after{transform:translateX(16px);background:#111}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field label{display:block;font-size:11px;color:#aaa;margin-bottom:7px}.field input,.field select{width:100%;padding:11px;background:#171717;color:#eee;border:1px solid #333;border-radius:9px;outline:none}.field.full{grid-column:1/-1}
+.empty{padding:40px;text-align:center;color:#777}.mobile-menu{display:none}
+.toast{position:fixed;right:22px;bottom:22px;background:#eee;color:#111;padding:12px 16px;border-radius:10px;font-size:12px;font-weight:650;box-shadow:0 10px 30px #0008;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;z-index:20}.toast.show{opacity:1;transform:translateY(0)}
+.modal-backdrop{position:fixed;inset:0;background:#000b;display:none;place-items:center;z-index:15;padding:18px}.modal-backdrop.show{display:grid}.modal{width:min(440px,100%);background:#141414;border:1px solid #383838;border-radius:17px;padding:21px}.modal h3{margin:0 0 6px}.modal p{color:#999;font-size:12px;margin:0 0 18px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.grid-main{grid-template-columns:1fr}.app{grid-template-columns:220px 1fr}.sidebar{width:220px}main{margin-left:220px;padding:0 22px 35px}}
+@media(max-width:700px){.app{display:block}.sidebar{transform:translateX(-100%);width:260px;transition:.25s;box-shadow:15px 0 40px #0008}.sidebar.open{transform:translateX(0)}main{margin:0;padding:0 14px 28px}.topbar{height:65px;margin-bottom:22px}.mobile-menu{display:inline-grid}.crumb{display:none}.page-head{align-items:flex-start;flex-direction:column}.page-head h1{font-size:24px}.stats{gap:9px}.stat{padding:13px;min-height:112px}.stat-value{font-size:23px}.stat-top{font-size:10px}.stat-foot{font-size:10px}.panel{padding:15px}.table-title{align-items:flex-start;flex-direction:column}.table-tools{width:100%}.search{width:100%;flex:1}.table-scroll{overflow:auto}.settings-grid,.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.chart-wrap{height:190px}}
+
+.login{position:fixed;inset:0;background:var(--bg);z-index:30;display:none;place-items:center;padding:18px}.login.show{display:grid}
+.login .box{width:min(380px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+.login h2{margin:14px 0 4px;font-size:20px;letter-spacing:-.5px}.login p{margin:0 0 18px;color:var(--muted);font-size:12px}
+.login .field{margin-bottom:12px}.err{color:#e08b7e;font-size:12px;min-height:18px;margin-top:8px}
+.btn.danger{color:#e9a79c;border-color:#4a2c28}.btn.wide{width:100%;padding:12px;margin-top:6px}
+.action.ok{color:#9fdcbc;border-color:#2c4a3c}.action.no{color:#e9a79c;border-color:#4a2c28}
+.status.approved:before,.status.active:before{background:#9fdcbc}.status.rejected:before,.status.expired:before{background:#e9a79c}
+.note{font-size:11px;color:#888;margin:0 0 14px}.mono{font-family:ui-monospace,monospace}
+.modal select,.modal input{width:100%;padding:10px;background:#171717;color:#eee;border:1px solid #333;border-radius:9px;margin-top:6px}
+.rowline{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #222;font-size:12px}.rowline span{color:#888}
+</style>
+</head>
+<body>
+<div class="login show" id="login"><div class="box"><div class="brand" style="padding:0"><div class="brand-mark">D</div><div><div class="brand-name">docera</div><div class="brand-sub">admin console</div></div></div>
+<h2>Admin sign in</h2><p>Only accounts listed under <b>admins</b> in the database can enter.</p>
+<div class="field"><label>Email</label><input id="lEmail" type="email" autocapitalize="none" autocomplete="username"></div>
+<div class="field"><label>Password</label><input id="lPass" type="password" autocomplete="current-password"></div>
+<button class="btn primary wide" id="lGo">Sign in</button><div class="err" id="lErr"></div></div></div>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="brand-mark">D</div><div><div class="brand-name">docera</div><div class="brand-sub">admin console</div></div></div>
+  <div class="nav-label">Workspace</div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard"><span class="ico">▦</span>Dashboard</button>
+    <button data-page="approvals"><span class="ico">✓</span>Approvals <span class="count" id="navPend">0</span></button>
+    <button data-page="users"><span class="ico">♙</span>Users</button>
+    <button data-page="payments"><span class="ico">↗</span>Payments</button>
+    <button data-page="plans"><span class="ico">◇</span>Plans &amp; UPI</button>
+  </nav>
+  <div class="sidebar-bottom"><div class="admin-mini"><div class="avatar" id="admAv">A</div><div style="min-width:0"><strong>Administrator</strong><small id="admMail" style="display:block;overflow:hidden;text-overflow:ellipsis">—</small></div></div><button class="btn small" style="width:100%;margin-top:8px" id="outBtn">Sign out</button></div>
+</aside>
+<main>
+<header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="icon-btn mobile-menu" id="menuBtn">☰</button><div class="crumb">Docera / <b id="crumb">Dashboard</b></div></div><div class="top-actions"><span style="font-size:11px;color:#888" id="updated"></span><button class="btn small" id="refBtn">↻ Refresh</button></div></header>
+
+<section class="section active" id="dashboard">
+  <div class="page-head"><div><div class="eyebrow">Overview</div><h1>Dashboard</h1><p>Live numbers from your database.</p></div></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-top">Total users <span class="stat-icon">♙</span></div><div class="stat-value" id="stUsers">–</div><div class="stat-foot" id="stUsersF">&nbsp;</div></div>
+    <div class="stat"><div class="stat-top">Premium users <span class="stat-icon">◇</span></div><div class="stat-value" id="stPrem">–</div><div class="stat-foot" id="stPremF">&nbsp;</div></div>
+    <div class="stat"><div class="stat-top">Revenue this month <span class="stat-icon">₹</span></div><div class="stat-value" id="stRev">–</div><div class="stat-foot">Approved payments</div></div>
+    <div class="stat"><div class="stat-top">Pending approvals <span class="stat-icon">⌁</span></div><div class="stat-value" id="stPend">–</div><div class="stat-foot"><a href="#" style="color:#ddd" onclick="navigate('approvals');return false">Review now →</a></div></div>
+  </div>
+  <div class="grid-main">
+    <div class="panel"><div class="panel-head"><div><h2>Revenue overview</h2><p>Approved payments, last 6 months</p></div></div>
+      <div class="chart-wrap"><div class="chart-grid"><span></span><span></span><span></span><span></span></div><div class="bars" id="bars"></div><div class="chart-labels" id="barLabels"></div></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Active plans</h2><p>Premium users by plan</p></div></div><div class="plan-list" id="planMix"></div></div>
+  </div>
+  <div class="grid-main">
+    <div class="panel table-panel"><div class="table-title"><h2>Recent users</h2><button class="action" onclick="navigate('users')">View all →</button></div><div class="table-scroll"><table><thead><tr><th>User</th><th>Premium</th><th>Joined</th></tr></thead><tbody id="recentUsers"></tbody></table></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Recent payments</h2><p>Latest requests and decisions</p></div></div><div class="activity" id="recentPay"></div></div>
+  </div>
+</section>
+
+<section class="section" id="approvals"><div class="page-head"><div><div class="eyebrow">Payments</div><h1>Approvals</h1><p>Check each UTR in your bank / UPI app, then approve. Premium unlocks on the user's phone automatically.</p></div></div>
+  <div class="panel table-panel"><div class="table-title"><h2>Pending requests</h2><input class="search" id="pendSearch" placeholder="Search name, email or UTR…"></div><div class="table-scroll"><table><thead><tr><th>User</th><th>Plan</th><th>Amount</th><th>UTR</th><th>Payer UPI</th><th>Submitted</th><th>Decision</th></tr></thead><tbody id="pendTable"></tbody></table></div></div></section>
+
+<section class="section" id="users"><div class="page-head"><div><div class="eyebrow">People</div><h1>Users</h1><p>Accounts created in the app. Grant or revoke Premium by hand.</p></div></div>
+  <div class="panel table-panel"><div class="table-title"><h2>All users <span style="color:#777;font-weight:400" id="userCount"></span></h2><div class="table-tools"><input class="search" id="userSearch" placeholder="Search name, email or phone…"><select class="select" id="userFilter"><option value="all">All users</option><option value="active">Premium active</option><option value="expired">Expired</option><option value="free">Free</option></select></div></div><div class="table-scroll"><table><thead><tr><th>User</th><th>Phone</th><th>Premium</th><th>Valid till</th><th>Action</th></tr></thead><tbody id="usersTable"></tbody></table></div></div></section>
+
+<section class="section" id="payments"><div class="page-head"><div><div class="eyebrow">Transactions</div><h1>Payments</h1><p>Every payment request and its decision.</p></div><button class="btn" id="csvBtn">↓ Export CSV</button></div>
+  <div class="panel table-panel"><div class="table-title"><h2>All payments</h2><div class="table-tools"><input class="search" id="paySearch" placeholder="Search name or UTR…"><select class="select" id="payFilter"><option value="all">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div></div><div class="table-scroll"><table><thead><tr><th>Date</th><th>User</th><th>Plan</th><th>Amount</th><th>UTR</th><th>Status</th></tr></thead><tbody id="payTable"></tbody></table></div></div></section>
+
+<section class="section" id="plans"><div class="page-head"><div><div class="eyebrow">Revenue</div><h1>Plans &amp; UPI</h1><p>Changes reach the app the next time a user opens it online. No new APK needed.</p></div><button class="btn primary" id="planSave">Save changes</button></div>
+  <div class="panel" style="margin-bottom:15px"><div class="panel-head"><div><h2>Payment details</h2><p>Users pay to this UPI ID</p></div></div><div class="form-grid"><div class="field"><label>UPI ID</label><input id="cUpi" placeholder="name@bank" autocapitalize="none"></div><div class="field"><label>Payee name (shown in UPI app)</label><input id="cPayee" placeholder="Docera"></div></div></div>
+  <div class="panel"><div class="panel-head"><div><h2>Plans</h2><p>Price in ₹ and how many days of Premium</p></div></div><div class="form-grid">
+    <div class="field"><label>Monthly price (₹)</label><input id="cMAmt" inputmode="numeric"></div><div class="field"><label>Monthly days</label><input id="cMDays" inputmode="numeric"></div>
+    <div class="field"><label>Yearly price (₹)</label><input id="cYAmt" inputmode="numeric"></div><div class="field"><label>Yearly days</label><input id="cYDays" inputmode="numeric"></div></div></div></section>
+</main></div>
+<div class="toast" id="toast"></div>
+<div class="modal-backdrop" id="modal"><div class="modal"><h3 id="mTitle"></h3><p id="mText"></p><div id="mBody"></div><div class="modal-actions"><button class="btn" id="mNo">Cancel</button><button class="btn primary" id="mYes">Confirm</button></div></div></div>
+<script>
+const FB={apiKey:'AIzaSyBUiyQZ-ZSn-5jP0kQLHqU6uBaEEyK4OLo',db:'https://docera-81b4f-default-rtdb.asia-southeast1.firebasedatabase.app'};
+const DEF={month:{name:'Monthly',amt:99,days:30},year:{name:'Yearly',amt:799,days:365}};
+const $=s=>document.querySelector(s),D86=864e5;
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtD=t=>t?new Date(t).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—';
+const fmtDT=t=>t?new Date(t).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+const inr=n=>'₹'+(+n||0).toLocaleString('en-IN');
+let A=null,users={},pend={},cfg={},timer=null;
+try{A=JSON.parse(localStorage.getItem('docera_admin')||'null')}catch(_){}
+const saveA=()=>{try{localStorage.setItem('docera_admin',JSON.stringify(A))}catch(_){}};
+async function http(url,opt){const r=await fetch(url,opt);let j=null;try{j=await r.json()}catch(_){}if(!r.ok){const m=j&&j.error&&(j.error.message||j.error)||('HTTP '+r.status);throw new Error(typeof m==='string'?m:JSON.stringify(m))}return j}
+async function token(){
+ if(!A)throw new Error('NOT_LOGGED_IN');if(Date.now()<A.exp)return A.id;
+ const j=await http('https://securetoken.googleapis.com/v1/token?key='+FB.apiKey,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(A.refresh)});
+ A.id=j.id_token;A.refresh=j.refresh_token;A.exp=Date.now()+(+j.expires_in||3600)*1000-60000;saveA();return A.id;
+}
+const U=p=>FB.db+'/'+p+'.json';
+const get=async p=>http(U(p)+'?auth='+encodeURIComponent(await token()));
+const patch=async(p,b)=>http(U(p)+'?auth='+encodeURIComponent(await token()),{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify(b)});
+const put=async(p,b)=>http(U(p)+'?auth='+encodeURIComponent(await token()),{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(b)});
+/* ---------- login ---------- */
+async function signIn(email,pass){
+ const j=await http('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+FB.apiKey,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email,password:pass,returnSecureToken:true})});
+ A={uid:j.localId,email:j.email,refresh:j.refreshToken,id:j.idToken,exp:Date.now()+(+j.expiresIn||3600)*1000-60000};
+ let ok=false;try{ok=(await get('admins/'+A.uid))===true}catch(_){}
+ if(!ok){A=null;saveA();throw new Error('NOT_ADMIN')}
+ saveA();
+}
+$('#lGo').onclick=async()=>{
+ const b=$('#lGo'),e=$('#lEmail').value.trim(),p=$('#lPass').value;$('#lErr').textContent='';
+ if(!e||!p){$('#lErr').textContent='Enter email and password';return}
+ b.disabled=true;b.textContent='Signing in…';
+ try{await signIn(e,p);start()}catch(x){const m=String(x.message);$('#lErr').textContent=m==='NOT_ADMIN'?'This account is not an admin.':/INVALID_LOGIN|INVALID_PASSWORD|EMAIL_NOT_FOUND/.test(m)?'Wrong email or password.':/Failed to fetch|Network/i.test(m)?'No internet.':m}
+ finally{b.disabled=false;b.textContent='Sign in'}
+};
+$('#lPass').addEventListener('keydown',e=>{if(e.key==='Enter')$('#lGo').click()});
+$('#outBtn').onclick=()=>{A=null;saveA();clearInterval(timer);users={};pend={};$('#login').classList.add('show')};
+/* ---------- data ---------- */
+const planInfo=k=>Object.assign({name:(DEF[k]||{}).name||k},DEF[k]||{},(cfg.plans||{})[k]||{});
+const pstat=u=>{const p=u.premium;if(!p||!p.exp)return'free';return p.exp>Date.now()?'active':'expired'};
+const allPays=()=>{const a=[];for(const[uid,u]of Object.entries(users))for(const[pid,p]of Object.entries(u.payments||{}))a.push(Object.assign({uid,pid,user:(u.profile||{}).name||'—',email:(u.profile||{}).email||''},p));return a.sort((x,y)=>(y.t||0)-(x.t||0))};
+async function load(){
+ try{
+  const[u,p,c]=await Promise.all([get('users'),get('pending'),get('config/pay')]);
+  users=u||{};pend=p||{};cfg=c||{};
+  $('#updated').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  renderAll();
+ }catch(e){const m=String(e.message);if(/TOKEN_EXPIRED|INVALID_REFRESH|USER_NOT_FOUND|Permission denied|NOT_LOGGED/.test(m)){$('#outBtn').click();$('#lErr').textContent='Session ended. Sign in again.'}else toast(/Failed to fetch/.test(m)?'No internet':m)}
+}
+function start(){
+ $('#login').classList.remove('show');$('#admMail').textContent=A.email;$('#admAv').textContent=A.email[0].toUpperCase();
+ load();clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)load()},30000);
+}
+$('#refBtn').onclick=()=>{load();toast('Refreshing…')};
+/* ---------- render ---------- */
+const chipS=s=>`<span class="status ${s}">${esc(s)}</span>`;
+function renderAll(){renderDash();renderPend();renderUsers();renderPays();renderPlans()}
+function renderDash(){
+ const us=Object.values(users),act=us.filter(u=>pstat(u)==='active'),np=Object.keys(pend).length;
+ const now=new Date(),m0=new Date(now.getFullYear(),now.getMonth(),1).getTime();
+ const pays=allPays().filter(p=>p.status==='approved'),at=p=>p.approvedAt||p.t||0;
+ $('#stUsers').textContent=us.length;$('#stUsersF').textContent=us.filter(u=>(u.profile||{}).seen>Date.now()-30*D86).length+' active in last 30 days';
+ $('#stPrem').textContent=act.length;$('#stPremF').textContent=us.length?Math.round(act.length/us.length*100)+'% of users':'—';
+ $('#stRev').textContent=inr(pays.filter(p=>at(p)>=m0).reduce((s,p)=>s+(+p.amt||0),0));
+ $('#stPend').textContent=np;$('#navPend').textContent=np;
+ const mon=[];for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1),e=new Date(d.getFullYear(),d.getMonth()+1,1).getTime();mon.push({l:d.toLocaleDateString('en-IN',{month:'short'}),v:pays.filter(p=>at(p)>=d.getTime()&&at(p)<e).reduce((s,p)=>s+(+p.amt||0),0)})}
+ const mx=Math.max(1,...mon.map(x=>x.v));
+ $('#bars').innerHTML=mon.map(x=>`<div class="bar-group" title="${inr(x.v)}"><div class="bar" style="height:${Math.max(3,x.v/mx*100)}%"></div></div>`).join('');
+ $('#barLabels').innerHTML=mon.map(x=>`<span>${x.l}</span>`).join('');
+ const mix={};act.forEach(u=>{const k=u.premium.plan||'other';mix[k]=(mix[k]||0)+1});
+ $('#planMix').innerHTML=Object.keys(mix).length?Object.entries(mix).map(([k,n])=>`<div><div class="plan-row"><span>${esc(planInfo(k).name)}</span><strong>${n} · ${Math.round(n/act.length*100)}%</strong></div><div class="track"><div class="fill" style="width:${n/act.length*100}%"></div></div></div>`).join(''):'<div class="empty" style="padding:10px">No active Premium yet</div>';
+ const ru=Object.entries(users).map(([id,u])=>Object.assign({id},u.profile||{})).sort((a,b)=>(b.seen||0)-(a.seen||0)).slice(0,5);
+ $('#recentUsers').innerHTML=ru.map(p=>{const u=users[p.id];return`<tr><td><div class="user-cell"><div class="user-avatar">${esc((p.name||'?').split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase())}</div><div><b>${esc(p.name)}</b><small>${esc(p.email)}</small></div></div></td><td>${chipS(pstat(u))}</td><td>${fmtD(p.seen)}</td></tr>`}).join('')||'<tr><td colspan="3" class="empty">No users yet</td></tr>';
+ $('#recentPay').innerHTML=allPays().slice(0,5).map(p=>`<div class="activity-item"><div class="activity-mark">${p.status==='approved'?'✓':p.status==='rejected'?'×':'⌁'}</div><div class="activity-text"><b>${esc(planInfo(p.plan).name)} · ${inr(p.amt)} · ${esc(p.status)}</b><p>${esc(p.user)}</p></div><time>${fmtDT(p.t)}</time></div>`).join('')||'<div class="empty" style="padding:10px">No payments yet</div>';
+}
+function renderPend(){
+ const q=($('#pendSearch').value||'').toLowerCase(),rows=Object.entries(pend).map(([pid,p])=>Object.assign({pid},p)).sort((a,b)=>(a.t||0)-(b.t||0)).filter(p=>(p.name+p.email+p.utr).toLowerCase().includes(q));
+ $('#pendTable').innerHTML=rows.map(p=>`<tr><td><div class="user-cell"><div class="user-avatar">${esc((p.name||'?')[0].toUpperCase())}</div><div><b>${esc(p.name)}</b><small>${esc(p.email)} · ${esc(p.phone)}</small></div></div></td><td>${esc(planInfo(p.plan).name)}</td><td><b>${inr(p.amt)}</b></td><td class="mono">${esc(p.utr)}</td><td>${esc(p.payer)||'—'}</td><td>${fmtDT(p.t)}</td><td><button class="action ok" data-a="approve" data-id="${esc(p.pid)}">Approve</button> <button class="action no" data-a="reject" data-id="${esc(p.pid)}">Reject</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">Nothing pending 🎉</td></tr>';
+}
+function renderUsers(){
+ const q=($('#userSearch').value||'').toLowerCase(),f=$('#userFilter').value;
+ const rows=Object.entries(users).map(([id,u])=>({id,u,p:u.profile||{},s:pstat(u)})).filter(r=>(f==='all'||r.s===f)&&(r.p.name+r.p.email+r.p.phone).toLowerCase().includes(q)).sort((a,b)=>(b.p.seen||0)-(a.p.seen||0));
+ $('#userCount').textContent='· '+Object.keys(users).length;
+ $('#usersTable').innerHTML=rows.map(r=>`<tr><td><div class="user-cell"><div class="user-avatar">${esc((r.p.name||'?')[0].toUpperCase())}</div><div><b>${esc(r.p.name)}</b><small>${esc(r.p.email)}</small></div></div></td><td>${esc(r.p.phone)||'—'}</td><td>${chipS(r.s)}</td><td>${r.u.premium?fmtD(r.u.premium.exp):'—'}</td><td><button class="action ok" data-a="grant" data-id="${esc(r.id)}">Grant</button> ${r.u.premium?`<button class="action no" data-a="revoke" data-id="${esc(r.id)}">Revoke</button>`:''}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No users</td></tr>';
+}
+function renderPays(){
+ const q=($('#paySearch').value||'').toLowerCase(),f=$('#payFilter').value;
+ $('#payTable').innerHTML=allPays().filter(p=>(f==='all'||p.status===f)&&(p.user+p.email+p.utr).toLowerCase().includes(q)).map(p=>`<tr><td>${fmtDT(p.t)}</td><td><div class="user-cell"><div><b>${esc(p.user)}</b><small>${esc(p.email)}</small></div></div></td><td>${esc(planInfo(p.plan).name)}</td><td>${inr(p.amt)}</td><td class="mono">${esc(p.utr)}</td><td>${chipS(p.status)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No payments</td></tr>';
+}
+function renderPlans(){
+ if(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#plans'))return;
+ const m=planInfo('month'),y=planInfo('year');
+ $('#cUpi').value=cfg.upi||'';$('#cPayee').value=cfg.payee||'';$('#cMAmt').value=m.amt;$('#cMDays').value=m.days;$('#cYAmt').value=y.amt;$('#cYDays').value=y.days;
+}
+['pendSearch','userSearch','paySearch'].forEach(i=>$('#'+i).addEventListener('input',renderAll));['userFilter','payFilter'].forEach(i=>$('#'+i).addEventListener('change',renderAll));
+/* ---------- actions ---------- */
+function ask(title,text,body,yes){return new Promise(res=>{$('#mTitle').textContent=title;$('#mText').textContent=text;$('#mBody').innerHTML=body||'';$('#mYes').textContent=yes||'Confirm';$('#modal').classList.add('show');const done=v=>{$('#modal').classList.remove('show');res(v)};$('#mNo').onclick=()=>done(false);$('#mYes').onclick=()=>done(true)})}
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;b.disabled=true;
+ try{
+  if(a==='approve'||a==='reject'){
+   const p=pend[id];if(!p)return;const pl=planInfo(p.plan);
+   const rows=`<div class="rowline"><span>User</span><b>${esc(p.name)}</b></div><div class="rowline"><span>Plan</span><b>${esc(pl.name)} · ${pl.days} days</b></div><div class="rowline"><span>Amount to find in bank</span><b>${inr(p.amt)}</b></div><div class="rowline"><span>UTR</span><b class="mono">${esc(p.utr)}</b></div>`;
+   if(!await ask(a==='approve'?'Approve payment?':'Reject payment?',a==='approve'?'Only approve if this UTR and amount are in your bank/UPI history.':'The user can submit again with a correct UTR.',rows,a==='approve'?'Approve':'Reject'))return;
+   const T={'.sv':'timestamp'},body={},u=users[p.uid]||{};
+   if(a==='approve'){const base=Math.max(Date.now(),(u.premium&&u.premium.exp)||0);body['users/'+p.uid+'/premium']={plan:p.plan,exp:base+pl.days*D86,at:T};body['users/'+p.uid+'/payments/'+id+'/status']='approved';body['users/'+p.uid+'/payments/'+id+'/approvedAt']=T}
+   else{body['users/'+p.uid+'/payments/'+id+'/status']='rejected';body['users/'+p.uid+'/payments/'+id+'/rejectedAt']=T;body['utrs/'+p.utr]=null}
+   body['pending/'+id]=null;await patch('',body);toast(a==='approve'?'Approved — Premium will unlock on the user\'s phone':'Rejected');await load();
+  }else if(a==='grant'){
+   const u=users[id],p=u.profile||{};
+   const ok=await ask('Grant Premium','Give '+(p.name||'this user')+' Premium without a payment.',`<label style="font-size:11px;color:#aaa">Plan</label><select id="gPlan"><option value="month">${esc(planInfo('month').name)}</option><option value="year">${esc(planInfo('year').name)}</option></select><label style="font-size:11px;color:#aaa;display:block;margin-top:10px">Days</label><input id="gDays" inputmode="numeric" value="${planInfo('month').days}">`,'Grant');
+   if(!ok)return;const pk=$('#gPlan').value,days=Math.max(1,parseInt($('#gDays').value)||planInfo(pk).days),base=Math.max(Date.now(),(u.premium&&u.premium.exp)||0);
+   await put('users/'+id+'/premium',{plan:pk,exp:base+days*D86,by:'admin-grant',at:{'.sv':'timestamp'}});toast('Premium granted');await load();
+  }else if(a==='revoke'){
+   if(!await ask('Revoke Premium?','The user loses Premium the next time their app goes online.','','Revoke'))return;
+   await put('users/'+id+'/premium',null);toast('Premium revoked');await load();
+  }
+ }catch(x){toast(String(x.message).slice(0,90))}finally{b.disabled=false}
+});
+$('#planSave').onclick=async()=>{
+ const n=x=>parseInt($(x).value),v={upi:$('#cUpi').value.trim(),payee:$('#cPayee').value.trim()||'Docera',plans:{month:{amt:n('#cMAmt'),days:n('#cMDays')},year:{amt:n('#cYAmt'),days:n('#cYDays')}}};
+ if(!v.upi||!/^[\w.\-]+@[\w.\-]+$/.test(v.upi))return toast('Enter a valid UPI ID');
+ for(const k of['month','year'])if(!(v.plans[k].amt>0)||!(v.plans[k].days>0))return toast('Prices and days must be numbers');
+ try{await put('config/pay',v);cfg=v;toast('Saved. The app picks it up when users are online');renderAll()}catch(e){toast(String(e.message).slice(0,90))}
+};
+$('#csvBtn').onclick=()=>{
+ const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"',rows=[['Date','Name','Email','Phone','Plan','Amount','UTR','Payer UPI','Status']].concat(allPays().map(p=>[new Date(p.t||0).toISOString(),p.user,p.email,p.phone,p.plan,p.amt,p.utr,p.payer,p.status]));
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.map(q).join(',')).join('\n')],{type:'text/csv'}));a.download='docera-payments.csv';a.click();
+};
+/* ---------- nav ---------- */
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),2600)}
+function navigate(page){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(page).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$('#crumb').textContent=document.querySelector(`[data-page="${page}"]`).innerText.replace(/\d+$/,'').trim();$('#sidebar').classList.remove('open');window.scrollTo(0,0)}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
+$('#menuBtn').addEventListener('click',()=>$('#sidebar').classList.toggle('open'));
+if(A)start();
+</script>
+</body></html>
